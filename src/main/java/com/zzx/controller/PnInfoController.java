@@ -29,15 +29,18 @@
  *****************************************************************/
 package com.zzx.controller;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zzx.dao.PnInfoDao;
 import com.zzx.model.PnInfo;
+import com.zzx.model.result.ResultMessage;
 import com.zzx.service.PnInfoService;
 
 /**
@@ -48,6 +51,7 @@ import com.zzx.service.PnInfoService;
  * @version 1.0.0
  */
 @RestController
+@RequestMapping("/pninfo")
 public class PnInfoController {
     
     private Logger logger = Logger.getLogger(PnInfoController.class);
@@ -55,11 +59,34 @@ public class PnInfoController {
     @Autowired
     private PnInfoService pnInfoService;
 
-    @RequestMapping("/PnInfo/{id}")
-    @ResponseBody
-    public PnInfo getUserInfo(@PathVariable Integer id) {
-        PnInfo user = pnInfoService.findPnInfoById(id);
-        return user;
+    @RequestMapping("/{id}")
+    public Object getPnInfoById(@PathVariable Integer id) {
+        PnInfo info = pnInfoService.findPnInfoById(id);
+        if(null == info)
+            return ResultMessage.buildNullResultMsg();
+        else
+            return PnInfo.buildJsonById(info);
     }
     
+    @RequestMapping("/type/{pnType}/{offset}")
+    public Object getPnInfoByType(@PathVariable Integer pnType,@PathVariable Integer offset){
+        if(pnType == null)
+            pnType = 0;
+        if(offset == null)
+            offset = 0;
+        List<PnInfo> data = pnInfoService.findPnByType(pnType, offset, 10);
+        if(data.size() >0)
+            return PnInfo.buildJsonByType(data);
+        else
+            return ResultMessage.buildNullResultMsg();
+    }
+    
+    @RequestMapping("/search")
+    public Object getPnInfoBySearchKey(@RequestParam("searchKey") String searchKey){
+        List<PnInfo> data = pnInfoService.findPnBySearchKey(searchKey);
+        if(data.size() >0)
+            return PnInfo.buildJsonByType(data);
+        else
+            return ResultMessage.buildNullResultMsg();
+    }
 }

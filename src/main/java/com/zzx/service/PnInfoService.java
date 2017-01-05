@@ -29,6 +29,8 @@
  *****************************************************************/
 package com.zzx.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,7 +51,22 @@ public class PnInfoService {
     private PnInfoDao pnInfoDao;
     
     public PnInfo findPnInfoById(int id){
-        return pnInfoDao.findUserById(id);
-               
+        return pnInfoDao.findPnInfoById(id);
+    }
+    
+    /**
+     * 
+     * @Description (按分类查找公众号)
+     * @param pnType
+     * @param offset
+     * @param pagesize
+     * @return
+     */
+    public List<PnInfo> findPnByType(int pnType, int offset, int pagesize){
+        return pnInfoDao.findPnByType(pnType, offset, pagesize);
+    }
+    
+    public List<PnInfo> findPnBySearchKey(String searchKey){
+        return pnInfoDao.findPnBySearchKey(searchKey);
     }
 }

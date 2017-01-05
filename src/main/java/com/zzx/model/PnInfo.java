@@ -2,6 +2,11 @@ package com.zzx.model;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.zzx.model.result.ResultMessage;
+
 /**
  * 微信公众号
  */
@@ -17,6 +22,31 @@ public class PnInfo {
     private String qrPic;
     private String area;
 
+    /**
+     * 
+     * @Description (json build by type)
+     * @param data
+     * @return
+     */
+    public static String buildJsonById(Object data){
+        ResultMessage msg = ResultMessage.buildSuccessMsg(data);
+        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(PnInfo.class , "name", "qrPic", "brief", "type", "num", "describe");
+        return JSONObject.toJSONString(msg, filter, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullNumberAsZero, SerializerFeature.WriteNullStringAsEmpty);
+    }
+    
+    /**
+     * 
+     * @Description (json build by type)
+     * @param data
+     * @return
+     */
+    public static String buildJsonByType(Object data){
+        ResultMessage msg = ResultMessage.buildSuccessMsg(data);
+        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(PnInfo.class , "id", "name", "thumbPic", "brief");
+        return JSONObject.toJSONString(msg, filter, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullNumberAsZero, SerializerFeature.WriteNullStringAsEmpty);
+    }
 
     @Override
     public String toString() {

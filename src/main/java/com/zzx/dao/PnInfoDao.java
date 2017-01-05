@@ -31,9 +31,8 @@ package com.zzx.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,13 +47,26 @@ import com.zzx.model.PnInfo;
  * @version 1.0.0
  */
 @Repository
-public class PnInfoDao {
-    @Autowired  
-    private JdbcTemplate jdbcTemplate; 
+public class PnInfoDao extends BaseDao{
     
     @Transactional(readOnly = true)
-    public PnInfo findUserById(int id) {
-        return jdbcTemplate.queryForObject("select * FROM tb_pn_info where id = ?", new Object[] { id }, new PnInfoRowMapper());
+    public PnInfo findPnInfoById(int id) {
+        return getJdbcTemplate().queryForObject(
+                "select p.id,p.wx_pn_name,t.comments as wx_pn_type, p.wx_pn_num, p.wx_pn_brief, p.wx_pn_describe, p.wx_pn_area, p.wx_pn_qr_pic, p.wx_pn_release_date, p.wx_pn_thumb_pic FROM wx_program_db.tb_pn_info p inner join wx_program_db.tb_pn_type t on p.wx_pn_type = t.id where p.id = ?",
+                new Object[] {id }, new PnInfoRowMapper());
+    }
+    
+    public List<PnInfo> findPnByType(int pnType, int offset, int pagesize){
+        if(pnType>0){
+            return getJdbcTemplate().query("select * FROM tb_pn_info where wx_pn_type = ? limit ?,?", new Object[] { pnType, offset, pagesize }, new PnInfoRowMapper());
+        }else{
+            return getJdbcTemplate().query("select * FROM tb_pn_info limit ?,?", new Object[] { offset, pagesize }, new PnInfoRowMapper());
+        }
+        
+    }
+    
+    public List<PnInfo> findPnBySearchKey(String searchKey){
+        return getJdbcTemplate().query("select * FROM tb_pn_info where wx_pn_name like CONCAT('%',?,'%')", new Object[] { searchKey }, new PnInfoRowMapper());
     }
 }
 
