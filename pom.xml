@@ -65,9 +65,24 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.23</version>
 		</dependency>
+		
+		<!-- swagger-springmvc 生产api文档-->
+	     <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+	    <!-- swagger-springmvc dependencies -->
 	</dependencies>
 
 	<build>
+	 	<finalName>xcx</finalName>  
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -75,6 +90,11 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<repositories>  
+        <repository>  
+            <id>spring-milestone</id>  
+            <url>http://repo.spring.io/libs-release</url>  
+        </repository>  
+    </repositories>
 
 </project>

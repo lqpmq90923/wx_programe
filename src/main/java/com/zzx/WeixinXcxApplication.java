@@ -5,6 +5,8 @@ import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -12,10 +14,14 @@ import org.springframework.core.env.Environment;
 import com.alibaba.druid.pool.DruidDataSource;
 
 @SpringBootApplication
-public class WeixinXcxApplication implements EnvironmentAware {
+public class WeixinXcxApplication extends SpringBootServletInitializer implements EnvironmentAware {
 
     private RelaxedPropertyResolver propertyResolver;
 
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(WeixinXcxApplication.class);
+    }
+    
     @Override
     public void setEnvironment(Environment env) {
         this.propertyResolver = new RelaxedPropertyResolver(env, "spring.datasource.");

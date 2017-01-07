@@ -35,23 +35,29 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zzx.model.PnInfo;
 import com.zzx.model.result.ResultMessage;
 import com.zzx.service.PnInfoService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * @ClassName PnInfoController
- * @Description TODO(这里用一句话描述这个类的作用)
+ * @Description TODO(公众号信息)
  * @author liqiang
  * @Date 2017年1月4日 下午4:47:56
  * @version 1.0.0
  */
 @RestController
-@RequestMapping("/pninfo")
+@RequestMapping("/api/pninfo")
+@Api(value = "PnInfoController", description = "公众号类型")  
 public class PnInfoController {
     
     private Logger logger = Logger.getLogger(PnInfoController.class);
@@ -59,7 +65,9 @@ public class PnInfoController {
     @Autowired
     private PnInfoService pnInfoService;
 
-    @RequestMapping("/{id}")
+    @ApiOperation(value="获取公众号详情", notes="")
+    @ApiImplicitParam(name="id", value="公众号流水编号", required = true, paramType="path", dataType="int")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Object getPnInfoById(@PathVariable Integer id) {
         PnInfo info = pnInfoService.findPnInfoById(id);
         if(null == info)
@@ -68,7 +76,12 @@ public class PnInfoController {
             return PnInfo.buildJsonById(info);
     }
     
-    @RequestMapping("/type/{pnType}/{offset}")
+    @ApiOperation(value="按类型分页获取公众号列表", notes="")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pnType", value = "公众号类型编号(0:表示全部)", required = true, paramType="path", dataType="int"),
+        @ApiImplicitParam(name = "offset", value = "分页偏移量", required = true, paramType="path", dataType="int")
+    })
+    @RequestMapping(value = "/type/{pnType}/{offset}", method = RequestMethod.GET )
     public Object getPnInfoByType(@PathVariable Integer pnType,@PathVariable Integer offset){
         if(pnType == null)
             pnType = 0;
@@ -81,7 +94,9 @@ public class PnInfoController {
             return ResultMessage.buildNullResultMsg();
     }
     
-    @RequestMapping("/search")
+    @ApiOperation(value="根据公众号名称，进行关键字检索", notes="")
+    @ApiImplicitParam(name = "searchKey", value = "检索关键字", paramType="query", dataType="String")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
     public Object getPnInfoBySearchKey(@RequestParam("searchKey") String searchKey){
         List<PnInfo> data = pnInfoService.findPnBySearchKey(searchKey);
         if(data.size() >0)
